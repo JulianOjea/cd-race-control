@@ -1,5 +1,7 @@
+package com.campusdual.racecontrol;
+
 import com.campusdual.racecontrol.model.*;
-import util.Input;
+import com.campusdual.racecontrol.util.Input;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +20,7 @@ public class RaceControl {
         tournamentList.add(t0);
         tournamentList.add(t1);
         tournamentList.add(t2);
-        t2.addRace(new EliminationRace("Mortal Race"));
+        t2.addRace(new StandardRace("Mortal Race"));
         t2.addRace(new EliminationRace("Demonic Race"));
         t2.addRace(new StandardRace("Eternal Race"));
 
@@ -42,6 +44,7 @@ public class RaceControl {
 
         t2.getRaceList().get(0).addGarage(g0);
         t2.getRaceList().get(0).addGarage(g1);
+        t2.getRaceList().get(1).addGarage(g1);
     }
 
     public void introductionPrompt(String keyword){
@@ -97,7 +100,7 @@ public class RaceControl {
         for (int i = 0; i < carList.size(); i++) {
             System.out.println(i + ". " + carList.get(i).getBrand() + " " +
                     carList.get(i).getModel() + " " +
-                    carList.get(i).getGarage().getName());
+                    carList.get(i).getGarageName());
         }
         int input = Input.integer();
         return carList.get(input);
@@ -255,13 +258,13 @@ public class RaceControl {
                     System.out.println("Coches existentes:");
                     for (Car c:
                             this.carList) {
-                        System.out.println(c.getBrand() + " " + c.getModel() + " " + c.getGarage().getName());
+                        System.out.println(c.getBrand() + " " + c.getModel() + " " + c.getGarageName());
                     }
                     System.out.println("\n");
                     break;
                 case 3:
                     Car car = carSelector();
-                    if (car.getGarage().getName().equals("NoGarage")){
+                    if (car.getGarageName().isEmpty()){
                         Garage garage = garageSelector();
                         garage.addCar(car);
                     }
@@ -277,6 +280,100 @@ public class RaceControl {
         }
     }
 
+    public int simulatorRaceSelector(Tournament t){
+        System.out.println("Seleccion la carrear a simular:");
+        List<Race> raceList = t.getRaceList();
+        Race race;
+        System.out.println("0. Salir del simulador");
+        for (int i = 0; i < raceList.size(); i++) {
+            race = raceList.get(i);
+            System.out.println((i+1)+". " + race.getName());
+
+            if(!race.getGarageList().isEmpty()){
+                System.out.println("\tLista de garajes");
+                for (Garage g: race.getGarageList()) {
+                    System.out.println("\t\tNombre: " + g.getName());
+                }
+            }else{
+                System.out.println("\t\tEsta carrera no tiene garajes asignados");
+            }
+            System.out.println("\t - - - - -");
+            if(!race.getCarList().isEmpty()){
+                System.out.println("\tLista de coches");
+                for (Car c: race.getCarList()) {
+                    System.out.println("\t\tMarca: " + c.getBrand() + " Modelo: " + c.getModel());
+                }
+            }else{
+                System.out.println("\t\tEsta carrera no tiene coches asignados");
+            }
+            System.out.println("\t - - - - -");
+            if(!race.getPodium().isEmpty()){
+                System.out.println("\t\tPodium:");
+                int j = 1;
+                for (Car c: race.getPodium()) {
+
+                    System.out.println(j + ". " + "\tMarca: " + c.getBrand() + " Modelo: " + c.getModel());
+                }
+            }else{
+                System.out.println("\t\tEsta carrera aún no ha sido simulada.");
+            }
+        }
+        return Input.integer();
+    }
+
+    public void raceSimulatorPrompt(){
+        System.out.println("--------------------------------");
+        System.out.println("--Desde aquí puede simular una--");
+        System.out.println("----------carrera.--------------");
+        System.out.println("--------------------------------");
+        Tournament t = tournamentSelector();
+        //TODO ESTO SE VE HORRIBLE XD
+        int exit;
+        boolean flag = true;
+        while (flag){
+            exit = simulatorRaceSelector(t);
+            if (exit!=0){
+                Race r = t.getRaceList().get(exit-1);
+
+                if (r.getCarList().isEmpty()){
+                    System.out.println("Ha seleccionado la carrera " + r.getName());
+                    System.out.println("Como aún no tiene coches asignados se procederá a distribuirlos");
+                    System.out.println("Pulse \"enter\" para continuar");
+                    Input.string();
+                    r.distributeRaceCars();
+                }else{
+                    if (r.getPodium().isEmpty()){
+                        System.out.println("--------------------------------\n\n");
+                        System.out.println("Ha seleccionado la carrera " + r.getName());
+                        System.out.println("Es una carrera de tipo: " + r.getType());
+                        System.out.println("Ready...");
+                        System.out.println("Set...");
+                        Input.string("(Presiona enter)");
+                        System.out.println("GO!...");
+
+                        System.out.println("-----------------------");
+                        System.out.println("\n\n Resultados. . .");
+                        List<Car> actualRace = r.simulateRace(r.getCarList());
+                        for (Car c:
+                             actualRace) {
+                            System.out.println("El coche " + c.getBrand() + " " + c.getModel() + " ha recorrido "
+                                    + c.getDistance() + " kilómetros.");
+                        }
+                        System.out.println("-----------------------");
+                        Input.string("(Presiona enter para ver ganadores . . .)");
+                        System.out.println("ey");
+                    } else {
+                        System.out.println("Esta carrera ya ha sido simulada");
+                    }
+                }
+
+            }else{
+                flag=false;
+            }
+        }
+
+    }
+
     public void mainPrompt(){
         boolean flag = true;
         while (flag){
@@ -287,6 +384,7 @@ public class RaceControl {
                     "2.Carrera\n" +
                     "3.Garage\n" +
                     "4.Coche\n" +
+                    "5.Simular carreras\n" +
                     "0.Salir");
             System.out.println("--------------------------------");
             switch (Input.integer()) {
@@ -301,6 +399,9 @@ public class RaceControl {
                     break;
                 case 4:
                     carPrompt();
+                    break;
+                case 5:
+                    raceSimulatorPrompt();
                     break;
                 case 0:
                     carPrompt();

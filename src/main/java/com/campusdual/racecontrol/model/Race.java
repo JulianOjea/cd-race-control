@@ -2,9 +2,14 @@ package com.campusdual.racecontrol.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public abstract class Race {
 
+
+    public static final int DURATION = 180;
+
+    private String type;
     private String name;
     private List<Garage> garageList = new ArrayList<>();
     private List<Car> carList = new ArrayList<>();
@@ -15,7 +20,6 @@ public abstract class Race {
         this.garageList = garageList;
         this.carList = carList;
     }
-
     public Race(String name) {
         this.name = name;
     }
@@ -40,13 +44,38 @@ public abstract class Race {
         return garageList;
     }
 
+    public List<Car> getCarList() {
+        return carList;
+    }
+
+    public List<Car> getPodium() {
+        return podium;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public void distributeRaceCars(){
+        Random rand = new Random();
         if(garageList.size()==1){
             carList.addAll(garageList.get(0).getCarList());
         } else if (garageList.isEmpty()) {
             System.out.println("No se pueden distribuir los coches debido a que esta carrera no tiene ningún garaje");
         } else {
-            //TODO estoy aqui, distribuir de manera aleatoria todo
+            for (Garage g:
+                 garageList) {
+                List<Car> garageCarList = g.getCarList();
+                if (!g.getCarList().isEmpty()){
+                    carList.add(garageCarList.get(rand.nextInt(garageCarList.size())));
+                }
+            }
         }
     }
+
+    public abstract List<Car> simulateRace(List<Car> car) ;
 }

@@ -26,6 +26,6 @@ public class Garage {
 
     public void addCar(Car car){
         this.carList.add(car);
-        car.setGarage(this);
+        car.setGarageName(this.getName());
     }
 }

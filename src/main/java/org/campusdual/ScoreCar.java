@@ -1,13 +1,12 @@
-package com.campusdual.racecontrol.model;
+package org.campusdual;
 
-import org.campusdual.ScoreCar;
+import com.campusdual.racecontrol.model.Car;
 import org.campusdual.util.Input;
 import org.campusdual.util.Utils;
 
-import java.util.Comparator;
 import java.util.Random;
 
-public class Car implements Comparable<Car> {
+public class ScoreCar implements Comparable<ScoreCar>{
 
     private String brand;
     private String model;
@@ -16,12 +15,12 @@ public class Car implements Comparable<Car> {
     private int speedometer = 0;
     private double distance = 0.0;
 
-    public Car() {
+    public ScoreCar() {
         this.brand = Input.string("Marca del coche: ");
         this.model = Input.string("Modelo del coche: ");
     }
 
-    public Car(String brand, String model) {
+    public ScoreCar(String brand, String model) {
         this.brand = brand;
         this.model = model;
     }
@@ -36,7 +35,7 @@ public class Car implements Comparable<Car> {
     }
 
     public void speedUp(){
-        if(this.speedometer< ScoreCar.MAX_VELOCITY){
+        if(this.speedometer<ScoreCar.MAX_VELOCITY){
             speedometer+=10;
         }
     }
@@ -117,7 +116,7 @@ public class Car implements Comparable<Car> {
     }
 */
     @Override
-    public int compareTo(Car o) {
+    public int compareTo(ScoreCar o) {
         if (this.getDistance() > o.getDistance()){
             return 1;
         }else if (this.getDistance() < o.getDistance()){
@@ -126,6 +125,4 @@ public class Car implements Comparable<Car> {
             return 0;
         }
     }
-
-
 }

@@ -1,4 +1,4 @@
-package util;
+package org.campusdual.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
