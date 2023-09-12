@@ -1,31 +1,29 @@
 package com.campusdual.racecontrol.model;
 
+import com.campusdual.racecontrol.util.Utils;
+
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public abstract class Race {
-
-
     public static final int DURATION = 180;
 
     private String type;
     private String name;
     private List<Garage> garageList = new ArrayList<>();
-    private List<Car> carList = new ArrayList<>();
     private List<Car> podium = new ArrayList<>();
 
-    public Race(String name, List<Garage> garageList, List<Car> carList) {
+
+    public Race(String name, List<Garage> garageList) {
         this.name = name;
         this.garageList = garageList;
-        this.carList = carList;
-    }
-    public Race(String name) {
-        this.name = name;
     }
 
-    public void addCar(Car car){
-        this.carList.add(car);
+    public Race(String name) {
+        this.name = name;
     }
 
     public void addGarage(Garage garage){
@@ -44,10 +42,6 @@ public abstract class Race {
         return garageList;
     }
 
-    public List<Car> getCarList() {
-        return carList;
-    }
-
     public List<Car> getPodium() {
         return podium;
     }
@@ -60,8 +54,42 @@ public abstract class Race {
         this.type = type;
     }
 
-    public void distributeRaceCars(){
-        Random rand = new Random();
+    public void distributeAndSimulate(List<Garage> garageList){
+        //Primero se vacian todos los coches
+        podium.clear();
+
+        List<Car> carList = distributeRaceCars(garageList);
+        System.out.println("Coches que se han distribuido: ");
+        Utils.showFromList(carList, true);
+        System.out.println("Resultado de la carrera");
+        List<Car> carListSimulated = simulateRace(carList);
+
+        getWinners(carListSimulated);
+    }
+
+    //A partir de una lista de coches simulados te devuelve el podio con 3 ganadores ordenados de mayor a menor
+    //es decir el index = 0, es el gandor ..
+
+    public List<Car> getWinners(List<Car> carListSimulated){
+        Collections.sort(carListSimulated);
+        Collections.reverse(carListSimulated);
+        //Utils.showFromList(carListSimulated, true);
+        System.out.println("----Se ha terminado la carrera-----");
+        System.out.println("Ganadores");
+        int i = 0;
+        for (Car c:carListSimulated) {
+            podium.add(i, carListSimulated.get(i));
+            i++;
+            if (i==3) break;
+        }
+        Utils.showFromList(podium, true);
+        System.out.println("------------------------------------");
+
+        return podium;
+    }
+
+    private List<Car> distributeRaceCars(List<Garage> garageList){
+        List<Car> carList = new ArrayList<>();
         if(garageList.size()==1){
             carList.addAll(garageList.get(0).getCarList());
         } else if (garageList.isEmpty()) {
@@ -71,11 +99,14 @@ public abstract class Race {
                  garageList) {
                 List<Car> garageCarList = g.getCarList();
                 if (!g.getCarList().isEmpty()){
-                    carList.add(garageCarList.get(rand.nextInt(garageCarList.size())));
+                    carList.add(garageCarList.get(Utils.random.nextInt(garageCarList.size())));
                 }
             }
         }
+        return carList;
     }
 
-    public abstract List<Car> simulateRace(List<Car> car) ;
+    //Le pasas una lista de coches y te simula la carrera devolviendo los coches con la velocidad y distancia final
+    //esto no devuelve los coches ordenados por ganador
+    abstract List<Car> simulateRace(List<Car> carList) ;
 }

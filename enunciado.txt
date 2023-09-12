@@ -44,3 +44,65 @@ En la aplicación, se pretende guardar el estado del programa, de manera que no 
  de los Coches, Garajes, Carreras y Torneos en un fichero.
 
 Este fichero debe cargarse cada vez que se inicia el programa y debe actualizarse antes de finalizar el programa.
+
+public class RaceControl {
+
+    List<Tournament> tournamentList = new ArrayList<>();
+    List<Garage> garageList = new ArrayList<>();
+    List<Car> carList = new ArrayList<>();
+    List<Race> raceList = new ArrayList<>();
+
+    public RaceControl() {
+        Tournament t0 = new Tournament("Retired Normies");
+        Tournament t1 = new Tournament("Caribean Cocktails");
+        Tournament t2 = new Tournament("Infernal Monsters");
+        tournamentList.add(t0);
+        tournamentList.add(t1);
+        tournamentList.add(t2);
+
+        Race r0 = new StandardRace("Mortal Race");
+        Race r1 = new EliminationRace("Demonic Race");
+        Race r2 = new StandardRace("Eternal Race");
+        t2.addRace(r0);
+        t2.addRace(r1);
+        t2.addRace(r2);
+
+        raceList.addAll(Arrays.asList(r0,r1,r2));
+
+
+        Garage g0 = new Garage("Pinguinos azules");
+        Garage g1 = new Garage("Caballos violetas");
+        Garage g2 = new Garage("Leones verdes");
+        Garage g3 = new Garage("Capibaras grises");
+        garageList.addAll(Arrays.asList(g0,g1,g2,g3));
+
+        //Añadiendo garajes a carreras:
+        r0.addGarage(g0);
+        r0.addGarage(g1);
+        r0.addGarage(g2);
+        r0.addGarage(g3);
+        r1.addGarage(g2);
+        r1.addGarage(g3);
+        r1.addGarage(g0);
+        r1.addGarage(g1);
+
+        Car c0 = new Car("Seat", "Ibiza");
+        Car c1 = new Car("Opel", "Meriva");
+        Car c2 = new Car("Renault", "306");
+        Car c3 = new Car("Honda", "Civic");
+        Car c4 = new Car("Rojo", "coche");
+        Car c5 = new Car("Amarillo", "coche");
+        Car c6 = new Car("Azul", "coche");
+        Car c7 = new Car("Verde", "coche");
+        carList.addAll(Arrays.asList(c0,c1,c2,c3,c4));
+
+        g0.addCar(c0);
+        g0.addCar(c1);
+        g1.addCar(c2);
+        g1.addCar(c3);
+        g2.addCar(c4);
+        g2.addCar(c5);
+        g3.addCar(c6);
+        g3.addCar(c7);
+
+    }

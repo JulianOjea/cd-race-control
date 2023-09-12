@@ -1,0 +1,47 @@
+[
+  {
+    "garageList": [
+      {
+        "garageName": "Pinguinos azules"
+      },
+      {
+        "garageName": "Caballos violetas"
+      },
+      {
+        "garageName": "Leones verdes"
+      },
+      {
+        "garageName": "Capibaras grises"
+      }
+    ],
+    "name": "Mortal Race",
+    "type": "Standard"
+  },
+  {
+    "garageList": [
+      {
+        "garageName": "Leones verdes"
+      },
+      {
+        "garageName": "Capibaras grises"
+      },
+      {
+        "garageName": "Pinguinos azules"
+      },
+      {
+        "garageName": "Caballos violetas"
+      }
+    ],
+    "name": "Demonic Race",
+    "type": "Elimination"
+  },
+  {
+    "garageList": [
+      {
+        "garageName": "Pinguinos azules"
+      }
+    ],
+    "name": "Eternal Race",
+    "type": "Standard"
+  }
+]

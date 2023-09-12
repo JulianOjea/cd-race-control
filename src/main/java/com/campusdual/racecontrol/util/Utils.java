@@ -1,6 +1,7 @@
-package org.campusdual.util;
+package com.campusdual.racecontrol.util;
 
-import java.lang.reflect.Array;
+import org.campusdual.util.Input;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class Utils {
         }
         System.out.print(builder.toString());
         if (wait) {
-            Input.string("\nPulse \"Enter\" para continuar...");
+            org.campusdual.util.Input.string("\nPulse \"Enter\" para continuar...");
         }
     }
 
@@ -160,9 +161,9 @@ public class Utils {
                 builder.append(", 0 para salir");
             }
             builder.append(": ");
-            int selected = Input.integer(builder.toString());
+            int selected = org.campusdual.util.Input.integer(builder.toString());
             while (!Utils.checkSelection(selected, list.size()) && (selected != 0)) {
-                selected = Input.integer("La opción no es válida, por favor, escoje una opción válida: ");
+                selected = org.campusdual.util.Input.integer("La opción no es válida, por favor, escoje una opción válida: ");
             }
 
             if (selected == 0) {

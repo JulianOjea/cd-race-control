@@ -1,0 +1,42 @@
+[
+  {
+    "garageName": "Pinguinos azules",
+    "model": "Ibiza",
+    "brand": "Seat"
+  },
+  {
+    "garageName": "Pinguinos azules",
+    "model": "Meriva",
+    "brand": "Opel"
+  },
+  {
+    "garageName": "Caballos violetas",
+    "model": "306",
+    "brand": "Renault"
+  },
+  {
+    "garageName": "Caballos violetas",
+    "model": "Civic",
+    "brand": "Honda"
+  },
+  {
+    "garageName": "Leones verdes",
+    "model": "coche",
+    "brand": "Rojo"
+  },
+  {
+    "garageName": "Leones verdes",
+    "model": "coche",
+    "brand": "Amarillo"
+  },
+  {
+    "garageName": "Capibaras grises",
+    "model": "coche",
+    "brand": "Azul"
+  },
+  {
+    "garageName": "Capibaras grises",
+    "model": "coche",
+    "brand": "Verde"
+  }
+]

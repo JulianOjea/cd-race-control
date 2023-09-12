@@ -1,8 +1,18 @@
 package com.campusdual.racecontrol;
 
+import com.campusdual.racecontrol.conversors.JsonCarConversor;
+import com.campusdual.racecontrol.conversors.JsonGarageConversor;
+import com.campusdual.racecontrol.conversors.JsonRaceConversor;
 import com.campusdual.racecontrol.model.*;
 import com.campusdual.racecontrol.util.Input;
+import com.campusdual.racecontrol.util.Utils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,39 +22,9 @@ public class RaceControl {
     List<Tournament> tournamentList = new ArrayList<>();
     List<Garage> garageList = new ArrayList<>();
     List<Car> carList = new ArrayList<>();
+    List<Race> raceList = new ArrayList<>();
 
     public RaceControl() {
-        Tournament t0 = new Tournament("Retired Normies");
-        Tournament t1 = new Tournament("Caribean Cocktails");
-        Tournament t2 = new Tournament("Infernal Monsters");
-        tournamentList.add(t0);
-        tournamentList.add(t1);
-        tournamentList.add(t2);
-        t2.addRace(new StandardRace("Mortal Race"));
-        t2.addRace(new EliminationRace("Demonic Race"));
-        t2.addRace(new StandardRace("Eternal Race"));
-
-        Garage g0 = new Garage("Pinguinos azules");
-        Garage g1 = new Garage("Caballos violetas");
-        Garage g2 = new Garage("Leones verdes");
-        Garage g3 = new Garage("Capibaras grises");
-        garageList.addAll(Arrays.asList(g0,g1,g2,g3));
-
-        Car c0 = new Car("Seat", "Ibiza");
-        Car c1 = new Car("Opel", "Meriva");
-        Car c2 = new Car("Renault", "306");
-        Car c3 = new Car("Honda", "Civic");
-        Car c4 = new Car("Porsche", "Carrera");
-        carList.addAll(Arrays.asList(c0,c1,c2,c3,c4));
-
-        g0.addCar(c0);
-        g0.addCar(c1);
-        g1.addCar(c2);
-        g1.addCar(c3);
-
-        t2.getRaceList().get(0).addGarage(g0);
-        t2.getRaceList().get(0).addGarage(g1);
-        t2.getRaceList().get(1).addGarage(g1);
     }
 
     public void introductionPrompt(String keyword){
@@ -298,14 +278,14 @@ public class RaceControl {
                 System.out.println("\t\tEsta carrera no tiene garajes asignados");
             }
             System.out.println("\t - - - - -");
-            if(!race.getCarList().isEmpty()){
+            /*if(!race.getCarList().isEmpty()){
                 System.out.println("\tLista de coches");
                 for (Car c: race.getCarList()) {
                     System.out.println("\t\tMarca: " + c.getBrand() + " Modelo: " + c.getModel());
                 }
             }else{
                 System.out.println("\t\tEsta carrera no tiene coches asignados");
-            }
+            }*/
             System.out.println("\t - - - - -");
             if(!race.getPodium().isEmpty()){
                 System.out.println("\t\tPodium:");
@@ -335,12 +315,12 @@ public class RaceControl {
             if (exit!=0){
                 Race r = t.getRaceList().get(exit-1);
 
-                if (r.getCarList().isEmpty()){
+                /*if (r.getCarList().isEmpty()){
                     System.out.println("Ha seleccionado la carrera " + r.getName());
                     System.out.println("Como aún no tiene coches asignados se procederá a distribuirlos");
                     System.out.println("Pulse \"enter\" para continuar");
                     Input.string();
-                    r.distributeRaceCars();
+                    //r.distributeRaceCars();
                 }else{
                     if (r.getPodium().isEmpty()){
                         System.out.println("--------------------------------\n\n");
@@ -353,19 +333,19 @@ public class RaceControl {
 
                         System.out.println("-----------------------");
                         System.out.println("\n\n Resultados. . .");
-                        List<Car> actualRace = r.simulateRace(r.getCarList());
-                        for (Car c:
-                             actualRace) {
-                            System.out.println("El coche " + c.getBrand() + " " + c.getModel() + " ha recorrido "
-                                    + c.getDistance() + " kilómetros.");
-                        }
+                        //List<Car> actualRace = r.simulateRace(r.getCarList());
+                        //for (Car c:
+                          //   actualRace) {
+                            //System.out.println("El coche " + c.getBrand() + " " + c.getModel() + " ha recorrido "
+                              //      + c.getDistance() + " kilómetros.");
+                        //}
                         System.out.println("-----------------------");
                         Input.string("(Presiona enter para ver ganadores . . .)");
                         System.out.println("ey");
                     } else {
                         System.out.println("Esta carrera ya ha sido simulada");
                     }
-                }
+                }*/
 
             }else{
                 flag=false;
@@ -410,8 +390,138 @@ public class RaceControl {
             }
         }
     }
-    public static void main(String[] args) {
+
+    public void raceSimulation(){
+        System.out.println("Seleccione la carrera que quiere simular: ");
+        Race r = Utils.showAndSelectFromList(this.raceList, false).get(0);
+        System.out.println("Esta carrera tiene los siguientes garajes asignados:");
+        List<Garage> g = r.getGarageList();
+        Utils.showFromList(g, true);
+        r.distributeAndSimulate(g);
+    }
+
+    public void tournamentSimulation(){
+        System.out.println("Seleccione el torneo que quiere simular: ");
+        Tournament t = Utils.showAndSelectFromList(this.tournamentList, false).get(0);
+        System.out.println("Esta torneo tiene las siguientes carreras:");
+        Utils.showFromList(t.getRaceList(), true);
+        System.out.println("Esta torneo tiene los siguientes garajes:");
+        Utils.showFromList(t.getGarageList(), true);
+        System.out.println("Distribuyendo coches . . .");
+        t.distributeCars();
+        System.out.println("Se han distribuido los siguientes coches: ");
+        Utils.showFromList(t.getCarList(), true);
+        t.simulateTournament();
+    }
+
+    public void trueMainprompt(){
+        System.out.println("--------------------------------");
+        System.out.println("Bienvenido al menú principal de la gestión de torneos y carreras!");
+        System.out.println("Seleccione a donde quiere acceder:");
+        System.out.println("1.Simular Carrera\n" +
+                "2.Simular torneo\n" +
+                "0.Salir");
+        System.out.println("--------------------------------");
+        boolean flag = true;
+        while (flag) {
+            switch (Input.integer()) {
+                case 1:
+                    raceSimulation();
+                    break;
+                case 2:
+                    tournamentSimulation();
+                    break;
+                case 0:
+                    flag = false;
+                    break;
+            }
+        }
+    }
+
+    public void exporter() throws IOException, ParseException {
+        /*JsonCarConversor jsoncar = new JsonCarConversor();
+
+        Car c0 = new Car("Seat", "Ibiza", "Pinguinos azules");
+        Car c1 = new Car("Opel", "Meriva", "Pinguinos azules");
+        Car c2 = new Car("Renault", "306", "Caballos violetas");
+        Car c3 = new Car("Honda", "Civic", "Caballos violetas");
+        Car c4 = new Car("Rojo", "coche", "Leones verdes");
+        Car c5 = new Car("Amarillo", "coche", "Leones verdes");
+        Car c6 = new Car("Azul", "coche", "Capibaras grises");
+        Car c7 = new Car("Verde", "coche", "Capibaras grises");
+
+        List<Car> c = new ArrayList<>(Arrays.asList(c0, c1, c2, c3, c4, c5, c6, c7));
+        jsoncar.exportCars(c);*/
+
+        /*
+        Garage g0 = new Garage("Pinguinos azules");
+        Garage g1 = new Garage("Caballos violetas");
+        Garage g2 = new Garage("Leones verdes");
+        Garage g3 = new Garage("Capibaras grises");
+        List<Garage> c = new ArrayList<>(Arrays.asList(g0, g1, g2, g3));
+
+        JsonGarageConversor.exportGarages(c);
+
+         */
+
+        Race r0 = new StandardRace("Mortal Race");
+        Race r1 = new EliminationRace("Demonic Race");
+        Race r2 = new StandardRace("Eternal Race");
+        List<Race> r = new ArrayList<>(Arrays.asList(r0, r1, r2));
+        r0.addGarage(this.garageList.get(0));
+        r0.addGarage(this.garageList.get(1));
+        r0.addGarage(this.garageList.get(2));
+        r0.addGarage(this.garageList.get(3));
+        r1.addGarage(this.garageList.get(2));
+        r1.addGarage(this.garageList.get(3));
+        r1.addGarage(this.garageList.get(0));
+        r1.addGarage(this.garageList.get(1));
+        r2.addGarage(this.garageList.get(0));
+        //JsonRaceConversor.exportRaces(r);
+
+        System.out.println("Exportado");
+    }
+
+    public void importer() throws IOException, ParseException {
+        JsonCarConversor jsoncar = new JsonCarConversor();
+        List<Car> cars = jsoncar.importCar();
+        this.carList.addAll(cars);
+
+        List<Garage> garages = JsonGarageConversor.importGarages();
+        this.garageList.addAll(garages);
+
+        for (Car c: this.carList) {
+            for (Garage g:this.garageList) {
+                if (c.getGarageName().equals(g.getName())){
+                    g.addCar(c);
+                }
+            }
+        }
+
+        List<Race> races = JsonRaceConversor.importRaces(this.garageList);
+        this.raceList.addAll(races);
+
+        //Tournament t0 = new Tournament("Retired Normies");
+        //Tournament t1 = new Tournament("Caribean Cocktails");
+        Tournament t2 = new Tournament("Infernal Monsters");
+        //tournamentList.add(t0);
+        //tournamentList.add(t1);
+        tournamentList.add(t2);
+
+        t2.addRace(this.raceList.get(0));
+        //t2.addRace(this.raceList.get(1));
+        t2.addRace(this.raceList.get(2));
+
+        t2.addGarage(this.garageList.get(0));
+        t2.addGarage(this.garageList.get(1));
+        t2.addGarage(this.garageList.get(2));
+    }
+
+    public static void main(String[] args) throws IOException, ParseException {
         RaceControl rc = new RaceControl();
-        rc.mainPrompt();
+        rc.importer();
+        //rc.exporter();
+        rc.trueMainprompt();
+        //rc.mainPrompt();
     }
 }

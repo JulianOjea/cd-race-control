@@ -3,7 +3,10 @@ package com.campusdual.racecontrol.model;
 import org.campusdual.ScoreCar;
 import org.campusdual.util.Input;
 import org.campusdual.util.Utils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
+import java.io.FileReader;
 import java.util.Comparator;
 import java.util.Random;
 
@@ -26,12 +29,20 @@ public class Car implements Comparable<Car> {
         this.model = model;
     }
 
+    public Car(String brand, String model, String garageName) {
+        this.brand = brand;
+        this.model = model;
+        this.garageName = garageName;
+    }
+
     @Override
     public String toString() {
-        return "ScoreCar{" +
+        return "Car{" +
                 "brand='" + brand + '\'' +
                 ", model='" + model + '\'' +
                 ", garageName='" + garageName + '\'' +
+                ", speedometer=" + speedometer +
+                ", distance=" + distance +
                 '}';
     }
 
@@ -94,6 +105,11 @@ public class Car implements Comparable<Car> {
         this.garageName = garageName;
     }
 
+    public void resetValues(){
+        this.setDistance(0);
+        this.setSpeedometer(0);
+    }
+
     /*
     public static void main(String[] args) {
         //ScoreCar c = new ScoreCar();
@@ -126,6 +142,4 @@ public class Car implements Comparable<Car> {
             return 0;
         }
     }
-
-
 }
